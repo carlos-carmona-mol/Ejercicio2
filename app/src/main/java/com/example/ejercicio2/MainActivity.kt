@@ -10,6 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
+import com.example.ejercicio2.client.SupabaseClient
+import io.github.jan.supabase.postgrest.postgrest
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -61,6 +65,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun enviarDatos() {
-        Toast.makeText(this, "Enviando Formulario.....", Toast.LENGTH_SHORT).show()
+        val solicitud1 = Solicitud(
+             vm.titulo.value!!,
+            vm.descripcion.value!!,
+            vm.categoria.value!!,
+            vm.prioridad.value!!.toInt(),
+            vm.email.value!!,
+        )
+
+        lifecycleScope.launch {
+            try {
+                SupabaseClient.client.postgrest["solicitudes"].insert(solicitud1)
+                Toast.makeText(this@MainActivity, "Enviado con Éxito", Toast.LENGTH_LONG).show()
+            }catch (e: Exception){
+                Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }
