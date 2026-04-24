@@ -4,11 +4,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import com.example.ejercicio2.client.SupabaseClient
@@ -17,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private val vm : FormViewModel by viewModels()
+    private val vm: FormViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,20 +61,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun enviarDatos() {
-        val solicitud1 = Solicitud(
-             vm.titulo.value!!,
-            vm.descripcion.value!!,
-            vm.categoria.value!!,
-            vm.prioridad.value!!.toInt(),
-            vm.email.value!!,
+    private fun enviarDatos() {
+        val solicitud = Solicitud(
+            titulo = vm.titulo.value.orEmpty(),
+            descripcion = vm.descripcion.value.orEmpty(),
+            categoria = vm.categoria.value.orEmpty(),
+            prioridad = vm.prioridad.value?.toIntOrNull() ?: 0,
+            email = vm.email.value.orEmpty()
         )
-
         lifecycleScope.launch {
             try {
-                SupabaseClient.client.postgrest["solicitudes"].insert(solicitud1)
-                Toast.makeText(this@MainActivity, "Enviado con Éxito", Toast.LENGTH_LONG).show()
+                SupabaseClient.client.postgrest["solicitudes"].insert(solicitud)
+                Toast.makeText(this@MainActivity, "Enviado con éxito", Toast.LENGTH_LONG).show()
             }catch (e: Exception){
+                e.printStackTrace()
                 Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
