@@ -12,6 +12,8 @@ class FormViewModel : ViewModel() {
     val email = MutableLiveData("")
     val formularioValido = MutableLiveData(false)
 
+    val enviando = MutableLiveData(false)
+
     fun validar() {
         val ti = titulo.value!!.length in 5..60
         val de = descripcion.value!!.length in 20..500
